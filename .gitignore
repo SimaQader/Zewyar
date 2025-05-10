@@ -37,6 +37,7 @@ yarn-error.*
 
 app-example
 .qodo
+<<<<<<< HEAD
 
 # OSX
 .DS_Store
@@ -92,3 +93,5 @@ yarn-error.log
 
 # testing
 /coverage
+=======
+>>>>>>> origin/main

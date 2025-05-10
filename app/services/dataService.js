@@ -36,6 +36,7 @@ const fetchCollection = async (collectionName) => {
   }
 };
 
+<<<<<<< HEAD
 // --- DEMO DATA FOR EXACT MATCH TO SCREENSHOT ---
 export const demoCauses = [
   {
@@ -206,6 +207,11 @@ const demoBlogs = [
 const fetchCauses = async () => demoCauses;
 const fetchOrganizations = async () => demoOrganizations;
 const fetchBlogs = async () => demoBlogs;
+=======
+const fetchCauses = () => fetchCollection('causes');
+const fetchOrganizations = () => fetchCollection('organizations');
+const fetchBlogs = () => fetchCollection('blogs');
+>>>>>>> origin/main
 
 const searchCauses = async (searchTerm) => {
   try {
@@ -273,6 +279,7 @@ const searchBlogs = async (searchTerm) => {
   }
 };
 
+<<<<<<< HEAD
 const updateDonationProgress = async (donationId, newRaised, newProgress) => {
   try {
     const updatedCauses = demoCauses.map(cause => {
@@ -297,14 +304,20 @@ const updateDonationProgress = async (donationId, newRaised, newProgress) => {
   }
 };
 
+=======
+>>>>>>> origin/main
 const dataService = {
   fetchCauses,
   fetchOrganizations,
   fetchBlogs,
   searchCauses,
   searchOrganizations,
+<<<<<<< HEAD
   searchBlogs,
   updateDonationProgress
+=======
+  searchBlogs
+>>>>>>> origin/main
 };
 
 export default dataService; 
