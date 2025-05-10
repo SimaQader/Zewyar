@@ -1,0 +1,127 @@
+{
+    "React Native Functional Component": {
+      "prefix": "rnfc",
+      "body": [
+        "import React from 'react';",
+        "import { View, Text } from 'react-native';",
+        "",
+        "const ${1:ComponentName} = () => {",
+        "  return (",
+        "    <View>",
+        "      <Text>${1:ComponentName}</Text>",
+        "    </View>",
+        "  );",
+        "};",
+        "",
+        "export default ${1:ComponentName};"
+      ],
+      "description": "Create a React Native functional component"
+    },
+    "React Native Class Component": {
+      "prefix": "rncc",
+      "body": [
+        "import React, { Component } from 'react';",
+        "import { View, Text } from 'react-native';",
+        "",
+        "class ${1:ComponentName} extends Component {",
+        "  render() {",
+        "    return (",
+        "      <View>",
+        "        <Text>${1:ComponentName}</Text>",
+        "      </View>",
+        "    );",
+        "  }",
+        "}",
+        "",
+        "export default ${1:ComponentName};"
+      ],
+      "description": "Create a React Native class component"
+    },
+    "React Native StyleSheet": {
+      "prefix": "rnstyle",
+      "body": [
+        "import { StyleSheet } from 'react-native';",
+        "",
+        "const styles = StyleSheet.create({",
+        "  container: {",
+        "    flex: 1,",
+        "    justifyContent: 'center',",
+        "    alignItems: 'center',",
+        "  },",
+        "});",
+        "",
+        "export default styles;"
+      ],
+      "description": "Create a React Native StyleSheet"
+    },
+    "React Native Import": {
+      "prefix": "rnimpt",
+      "body": [
+        "import { ${1:Component1}, ${2:Component2} } from 'react-native';"
+      ],
+      "description": "Import React Native components"
+    },
+    "React Native useState Hook": {
+      "prefix": "rnhookstate",
+      "body": [
+        "import React, { useState } from 'react';",
+        "",
+        "const [${1:state}, ${2:setState}] = useState(${3:initialState});"
+      ],
+      "description": "React Native useState Hook"
+    },
+    "React Native useEffect Hook": {
+      "prefix": "rnhookeffect",
+      "body": [
+        "import React, { useEffect } from 'react';",
+        "",
+        "useEffect(() => {",
+        "  // Your effect code here",
+        "}, [${1:dependencies}]);"
+      ],
+      "description": "React Native useEffect Hook"
+    },
+    "React Native FlatList": {
+      "prefix": "rnflatlist",
+      "body": [
+        "import { FlatList, View, Text } from 'react-native';",
+        "",
+        "<FlatList",
+        "  data={${1:data}}",
+        "  renderItem={({ item }) => (",
+        "    <View>",
+        "      <Text>{item.${2:key}}</Text>",
+        "    </View>",
+        "  )}",
+        "  keyExtractor={(item) => item.${3:keyExtractor}}",
+        "  ${4:otherProps}",
+        "/>"
+      ],
+      "description": "React Native FlatList"
+    },
+    "React Native Button": {
+      "prefix": "rnbtn",
+      "body": [
+        "import { Button } from 'react-native';",
+        "",
+        "<Button",
+        "  title='${1:ButtonTitle}'",
+        "  onPress={${2:handlePress}}",
+        "  ${3:otherProps}",
+        "/>"
+      ],
+      "description": "React Native Button"
+    },
+    "React Native TouchableOpacity": {
+      "prefix": "rntouchable",
+      "body": [
+        "import { TouchableOpacity, Text } from 'react-native';",
+        "",
+        "<TouchableOpacity onPress={${1:handlePress}}>",
+        "  <Text>${2:ButtonText}</Text>",
+        "</TouchableOpacity>"
+      ],
+      "description": "React Native TouchableOpacity"
+    }
+  }
+  
