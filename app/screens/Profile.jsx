@@ -9,7 +9,7 @@ const Profile = () => {
   const [user, setUser] = useState({
     name: 'John Doe',
     email: 'john@example.com',
-    profileImage: 'https://via.placeholder.com/150',
+    image:'user.png',
     bio: 'Passionate about making a difference in the world through charitable work.',
     joinedDate: 'January 2024',
     donations: 5,
@@ -29,7 +29,7 @@ const Profile = () => {
     // Implement logout logic here
     navigation.reset({
       index: 0,
-      routes: [{ name: 'Home' }],
+      routes: [{ name: 'LogIn' }],
     });
   };
 
@@ -41,7 +41,7 @@ const Profile = () => {
         <View style={styles.profileHeader}>
           <TouchableOpacity onPress={handleEditProfile} style={styles.profileImageContainer}>
             <Image
-              source={{ uri: user.profileImage }}
+              source={require('../assets/user.png')} 
               style={styles.profileImage}
             />
             <View style={styles.editIconContainer}>

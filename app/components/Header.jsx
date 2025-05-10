@@ -16,7 +16,7 @@ const Header = ({ onProfilePress }) => {
         accessibilityRole="button"
       >
         <Image 
-          source={{ uri: IMAGES.PROFILE }} 
+          source={require('../assets/user.png')} 
           style={styles.profileImage} 
         />
       </TouchableOpacity>

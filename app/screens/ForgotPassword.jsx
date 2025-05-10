@@ -13,8 +13,10 @@ import {
 } from 'react-native';
 import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 import { navigate, goBack } from '../navigation/navigation';
+import { useNavigation } from '@react-navigation/native';
 
 const ForgotPassword = () => {
+  const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -34,7 +36,12 @@ const ForgotPassword = () => {
       console.error(error);
     }
   };
-
+  const handlegoback = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'LogIn' }],
+    });
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -74,7 +81,7 @@ const ForgotPassword = () => {
         
         <TouchableOpacity 
           style={styles.backButton}
-          onPress={() => goBack()}
+          onPress={handlegoback}
         >
           <Text style={styles.backButtonText}>Back to Login</Text>
         </TouchableOpacity>

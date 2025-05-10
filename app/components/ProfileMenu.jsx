@@ -1,8 +1,7 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, Modal, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { IMAGES } from '../constants/images';
-
+  
 const ProfileMenu = ({ visible, onClose }) => {
   return (
     <Modal
@@ -20,7 +19,7 @@ const ProfileMenu = ({ visible, onClose }) => {
           {/* User Info */}
           <View style={styles.profileMenuHeader}>
             <Image 
-              source={{ uri: IMAGES.PROFILE }} 
+              source={require('../assets/user.png')} 
               style={styles.profileMenuImage} 
             />
             <View style={styles.profileMenuInfo}>

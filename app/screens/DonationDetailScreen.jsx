@@ -1,20 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, SafeAreaView, ScrollView, Modal, Clipboard } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, SafeAreaView, ScrollView, Modal, Clipboard, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import QRCode from 'react-native-qrcode-svg'; // You'll need to install this package
-import { useNavigation } from '@react-navigation/native';
+import QRCode from 'react-native-qrcode-svg';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const DonationDetailScreen = () => {
+  const route = useRoute();
   const navigation = useNavigation();
+  const { donation } = route.params || {};
 
-  // Your phone number for receiving donations
-  const recipientPhoneNumber = ""; // Replace with your actual number
-  
+  // Use dynamic data from donation or fallback to defaults
+  const image = donation?.image || 'https://images.unsplash.com/photo-1592906209472-a36b1f3782ef';
+  const title = donation?.title || 'Plant Tree for a School';
+  const goal = donation?.amount || 600;
+  const description = donation?.description || 'Help us plant trees for a greener school environment.';
+  const phone = donation?.phone || '';
+  const initialRaised = donation?.raised ;
+
   // Campaign goal and progress tracking
-  const [campaignGoal] = useState(600); // Total campaign goal in dollars
-  const [currentAmount, setCurrentAmount] = useState(190); // Current amount raised
-  const [progressPercentage, setProgressPercentage] = useState(30); // Initial progress percentage
+  const [campaignGoal] = useState(goal); // Use dynamic goal
+  const [currentAmount, setCurrentAmount] = useState(initialRaised); // Use dynamic raised
+
+  // Calculate progress percentage dynamically
+  const [progressPercentage, setProgressPercentage] = useState(
+    Math.min(Math.round((initialRaised / goal) * 100), 100)
+  );
   
+  // Animated value for progress bar
+  const progressAnimation = useRef(new Animated.Value(
+    Math.min((initialRaised / goal) * 100, 100)
+  )).current;
+
+  // Update animation when progressPercentage changes
+  useEffect(() => {
+    Animated.timing(progressAnimation, {
+      toValue: progressPercentage,
+      duration: 1000,
+      useNativeDriver: false
+    }).start();
+  }, [progressPercentage, progressAnimation]);
+
   const [selectedAmount, setSelectedAmount] = useState('15.00');
   const [customAmount, setCustomAmount] = useState('');
   const [selectedMethod, setSelectedMethod] = useState('Fast Pay');
@@ -22,13 +47,27 @@ const DonationDetailScreen = () => {
   const [showThankYou, setShowThankYou] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
 
+  // Reset state when donation changes
+  useEffect(() => {
+    setCurrentAmount(initialRaised);
+    const initialPercentage = Math.min(Math.round((initialRaised / goal) * 100), 100);
+    setProgressPercentage(initialPercentage);
+    
+    progressAnimation.setValue(initialPercentage); // Reset animation value directly
+    
+    setCustomAmount('');
+    setSelectedAmount('15.00');
+  }, [donation?.id, initialRaised, goal, progressAnimation]);
+
+  // Your phone number for receiving donations
+  const recipientPhoneNumber = phone; // Use dynamic phone
+
   // Final amount shown on donate button
   const donationAmount = customAmount ? customAmount : selectedAmount;
 
   // Generate payment data based on selected method and amount
   const getPaymentData = () => {
-    const baseData = `AMOUNT:${donationAmount};PROJECT:Plant Tree for a School;RECIPIENT:${recipientPhoneNumber};`;
-    
+    const baseData = `AMOUNT:${donationAmount};PROJECT:${title};RECIPIENT:${recipientPhoneNumber};`;
     if (selectedMethod === 'Fast Pay') {
       return `FASTPAY:${baseData}REF:FP${Date.now()}`;
     } else {
@@ -45,18 +84,16 @@ const DonationDetailScreen = () => {
 
   // Update progress when donation is made
   const processDonation = () => {
-    // Parse donation amount to float
-    const donationValue = parseFloat(donationAmount);
-    
-    // Update current amount raised
+    const donationValue = parseFloat(donationAmount || '0');
     const newTotal = currentAmount + donationValue;
     setCurrentAmount(newTotal);
     
-    // Calculate and update progress percentage
+    // Calculate and set new percentage
     const newPercentage = Math.min(Math.round((newTotal / campaignGoal) * 100), 100);
     setProgressPercentage(newPercentage);
     
-    // Close QR code modal and show thank you modal
+    // No need to animate here as useEffect will handle it when progressPercentage changes
+    
     setShowQRCode(false);
     setShowThankYou(true);
   };
@@ -83,10 +120,8 @@ const DonationDetailScreen = () => {
             >
               <Ionicons name="close" size={24} color="#000" />
             </TouchableOpacity>
-            
             <Text style={styles.modalTitle}>Scan to Donate</Text>
             <Text style={styles.modalSubtitle}>${donationAmount} via {selectedMethod}</Text>
-            
             <View style={styles.qrContainer}>
               <QRCode
                 value={getPaymentData()}
@@ -94,7 +129,6 @@ const DonationDetailScreen = () => {
                 color={selectedMethod === 'Fast Pay' ? '#E5225A' : '#009990'}
               />
             </View>
-            
             {/* Recipient Number Section */}
             <View style={styles.recipientNumberContainer}>
               <Text style={styles.recipientLabel}>Send to this number:</Text>
@@ -109,11 +143,9 @@ const DonationDetailScreen = () => {
               </View>
               {copySuccess && <Text style={styles.copiedText}>Number copied!</Text>}
             </View>
-            
             <Text style={styles.qrInstructions}>
               Open your {selectedMethod} app and scan this code or send directly to the number above
             </Text>
-            
             <TouchableOpacity 
               style={styles.doneButton}
               onPress={processDonation}
@@ -140,24 +172,30 @@ const DonationDetailScreen = () => {
             <View style={styles.checkCircle}>
               <Ionicons name="checkmark" size={50} color="#fff" />
             </View>
-            
             <Text style={styles.thankYouTitle}>Thank You!</Text>
             <Text style={styles.thankYouMessage}>
-              Your donation of ${donationAmount} will help plant trees at a school.
-              Together we're making the world greener!
+              {`Your donation of $${donationAmount} will help: ${description}`}
             </Text>
-            
             {/* Progress update message */}
             <View style={styles.progressUpdateContainer}>
               <Text style={styles.progressUpdateText}>
                 Campaign Progress: ${formatCurrency(currentAmount)} of ${formatCurrency(campaignGoal)}
               </Text>
               <View style={styles.miniProgressBarBackground}>
-                <View style={[styles.miniProgressBar, { width: `${progressPercentage}%` }]} />
+                <Animated.View 
+                  style={[
+                    styles.miniProgressBar, 
+                    { 
+                      width: progressAnimation.interpolate({
+                        inputRange: [0, 100],
+                        outputRange: ['0%', '100%']
+                      }) 
+                    }
+                  ]} 
+                />
               </View>
               <Text style={styles.miniProgressPercent}>{progressPercentage}% Complete</Text>
             </View>
-            
             <TouchableOpacity 
               style={styles.closeThankYouButton}
               onPress={() => setShowThankYou(false)}
@@ -173,26 +211,23 @@ const DonationDetailScreen = () => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <ScrollView contentContainerStyle={styles.container}>
-        {/* Back button - FIXED HERE */}
+        {/* Back button */}
         <TouchableOpacity 
           style={styles.backButton}
-          onPress={() => navigation.navigate('Home')}
+          onPress={() => navigation.goBack()}
         >
           <Ionicons name="chevron-back" size={30} color="#000" />
         </TouchableOpacity>
-        
         {/* Hero Image */}
         <View style={styles.imageContainer}>
           <Image
-            source={{ uri: 'https://images.unsplash.com/photo-1592906209472-a36b1f3782ef' }}
+            source={{ uri: image }}
             style={styles.heroImage}
             resizeMode="contain"
           />
         </View>
-
         {/* Project Title */}
-        <Text style={styles.projectTitle}>Plant Tree for a School</Text>
-
+        <Text style={styles.projectTitle}>{title}</Text>
         {/* Donation Progress */}
         <View style={styles.donationInfoContainer}>
           <Text style={styles.donationAmount}>$ {formatCurrency(currentAmount)}</Text>
@@ -201,17 +236,24 @@ const DonationDetailScreen = () => {
             <Text style={styles.timeLeft}>15 days left</Text>
           </View>
         </View>
-
         {/* Progress Bar */}
         <View style={styles.progressBarBackground}>
-          <View style={[styles.progressBar, { width: `${progressPercentage}%` }]} />
+          <Animated.View 
+            style={[
+              styles.progressBar, 
+              { 
+                width: progressAnimation.interpolate({
+                  inputRange: [0, 100],
+                  outputRange: ['0%', '100%']
+                }) 
+              }
+            ]} 
+          />
         </View>
         <Text style={styles.progressPercent}>{progressPercentage}%</Text>
-
         {/* Donation Form Section */}
         <View style={styles.formContainer}>
           <Text style={styles.formLabel}>Donation amount</Text>
-          
           {/* Amount Input */}
           <View style={styles.inputContainer}>
             <Text style={styles.currencySymbol}>$</Text>
@@ -224,7 +266,6 @@ const DonationDetailScreen = () => {
               onChangeText={text => setCustomAmount(text)}
             />
           </View>
-
           {/* Quick Amount Selection */}
           <View style={styles.quickAmounts}>
             <TouchableOpacity 
@@ -233,14 +274,12 @@ const DonationDetailScreen = () => {
             >
               <Text style={styles.amountOptionText}>$ 5.00</Text>
             </TouchableOpacity>
-            
             <TouchableOpacity 
               style={[styles.amountOption, selectedAmount === '15.00' && !customAmount && styles.amountOptionSelected]}
               onPress={() => { setSelectedAmount('15.00'); setCustomAmount(''); }}
             >
               <Text style={styles.amountOptionText}>$ 15.00</Text>
             </TouchableOpacity>
-            
             <TouchableOpacity 
               style={[styles.amountOption, selectedAmount === '25.00' && !customAmount && styles.amountOptionSelected]}
               onPress={() => { setSelectedAmount('25.00'); setCustomAmount(''); }}
@@ -248,10 +287,8 @@ const DonationDetailScreen = () => {
               <Text style={styles.amountOptionText}>$ 25.00</Text>
             </TouchableOpacity>
           </View>
-
           {/* Payment Method */}
           <Text style={[styles.formLabel, { marginTop: 25 }]}>Select the Method</Text>
-          
           <View style={styles.paymentMethods}>
             <TouchableOpacity 
               style={[styles.methodOption, selectedMethod === 'Fast Pay' && styles.fastPaySelected]}
@@ -259,7 +296,6 @@ const DonationDetailScreen = () => {
             >
               <Text style={[styles.methodOptionText, selectedMethod === 'Fast Pay' && styles.methodOptionTextSelected]}>Fast Pay</Text>
             </TouchableOpacity>
-            
             <TouchableOpacity 
               style={[styles.methodOption, selectedMethod === 'FIB' && styles.fibSelected]}
               onPress={() => setSelectedMethod('FIB')}
@@ -267,20 +303,17 @@ const DonationDetailScreen = () => {
               <Text style={[styles.methodOptionText, selectedMethod === 'FIB' && styles.methodOptionTextSelected]}>FIB</Text>
             </TouchableOpacity>
           </View>
-
           {/* Goal Information */}
           <View style={styles.goalInfoContainer}>
             <Text style={styles.goalInfoText}>
               Campaign Goal: ${formatCurrency(campaignGoal)}
             </Text>
           </View>
-
           {/* Payment method QR code preview (mini version) */}
           <View style={styles.previewQrSection}>
             <Text style={styles.previewQrText}>Payment will be processed via:</Text>
             <View style={[styles.previewQrContainer, selectedMethod === 'Fast Pay' ? styles.fastPayBorder : styles.fibBorder]}>
               <View style={styles.miniQrCode}>
-                {/* Mini QR icon preview */}
                 <Ionicons 
                   name="qr-code" 
                   size={24} 
@@ -291,7 +324,6 @@ const DonationDetailScreen = () => {
             </View>
           </View>
         </View>
-
         {/* Donate Button */}
         <TouchableOpacity 
           style={styles.donateButton}
@@ -300,7 +332,6 @@ const DonationDetailScreen = () => {
           <Text style={styles.donateButtonText}>Donate ${donationAmount || '0.00'}</Text>
         </TouchableOpacity>
       </ScrollView>
-
       {/* Modals */}
       {renderQRCodeModal()}
       {renderThankYouModal()}
@@ -323,7 +354,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   heroImage: {
-    width: 220,
+    width:'100%',
     height: 220,
   },
   projectTitle: {
@@ -364,11 +395,17 @@ const styles = StyleSheet.create({
     height: 8,
     backgroundColor: '#1E5128',
     borderRadius: 4,
+    shadowColor: '#1E5128',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
+    elevation: 3,
   },
   progressPercent: {
     textAlign: 'right',
-    color: '#666',
-    fontSize: 12,
+    color: '#1E5128',
+    fontSize: 14,
+    fontWeight: '600',
     marginBottom: 35,
     paddingRight: 5,
   },
@@ -663,11 +700,17 @@ const styles = StyleSheet.create({
     height: 6,
     backgroundColor: '#1E5128',
     borderRadius: 3,
+    shadowColor: '#1E5128',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 2,
+    elevation: 2,
   },
   miniProgressPercent: {
     textAlign: 'right',
-    color: '#666',
-    fontSize: 12,
+    color: '#1E5128',
+    fontSize: 14,
+    fontWeight: '600',
     paddingRight: 5,
   },
   closeThankYouButton: {

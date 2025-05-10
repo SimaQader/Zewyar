@@ -13,8 +13,10 @@ import {
 } from 'react-native';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { navigate } from '../navigation/navigation';
+import { useNavigation } from '@react-navigation/native';
 
 const LoginScreen = ({ route }) => {
+  const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -33,25 +35,36 @@ const LoginScreen = ({ route }) => {
   }, [route?.params?.message]);
 
   const handleLogin = async () => {
-    try {
-      setError('');
-      setSuccessMessage('');
-      const auth = getAuth();
-      await signInWithEmailAndPassword(auth, email, password);
-      navigate('Home');
-    } catch (error) {
-      setError('Invalid email or password');
-      console.error(error);
-    }
+    // try {
+    //   setError('');
+    //   setSuccessMessage('');
+    //   const auth = getAuth();
+    //   await signInWithEmailAndPassword(auth, email, password);
+    //   navigate('Home');
+    // } catch (error) {
+    //   setError('Invalid email or password');
+    //   console.error(error);
+    // }
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Home' }],
+    });
   };
   
   const handleSignUp = () => {
-    navigate('SignUp');
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'SignUp' }],
+    });
   };
 
   const handleForgotPassword = () => {
-    navigate('ForgotPassword');
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'ForgotPassword' }],
+    });
   };
+  
 
   return (
     <KeyboardAvoidingView
@@ -122,6 +135,7 @@ const LoginScreen = ({ route }) => {
             <Text style={styles.signupText}>Sign Up</Text>
           </TouchableOpacity>
         </View>
+        
         
         <View style={styles.dividerContainer}>
           <View style={styles.divider} />

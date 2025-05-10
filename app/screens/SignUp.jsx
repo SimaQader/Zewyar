@@ -24,8 +24,10 @@ import {
   onAuthStateChanged
 } from 'firebase/auth';
 import { navigate } from '../navigation/navigation';
+import { useNavigation } from '@react-navigation/native';
 
 const SignUpScreen = () => {
+  const navigation = useNavigation();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -51,7 +53,10 @@ const SignUpScreen = () => {
   };
 
   const handleLogin = () => {
-    navigate('LogIn');
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'LogIn' }],
+    });
   };
 
   return (
