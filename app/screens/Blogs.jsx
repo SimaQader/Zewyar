@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -84,53 +83,6 @@ const Blogs = ({ navigation }) => {
             {item.views.toLocaleString()} views
           </Text>
         </View>
-=======
-import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, SafeAreaView, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
-import BottomBar from '../components/BottomBar';
-
-// Dummy blog data
-const DUMMY_BLOGS = [
-  {
-    id: '1',
-    title: 'The Future of Sustainability',
-    image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
-    date: '2024-06-01',
-    views: 123,
-    description: 'Exploring the latest trends and innovations in sustainability for a better tomorrow.'
-  },
-  {
-    id: '2',
-    title: 'How to Make a Difference',
-    image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
-    date: '2024-05-28',
-    views: 98,
-    description: 'Simple steps everyone can take to help the environment and their community.'
-  },
-  {
-    id: '3',
-    title: 'Community Projects That Inspire',
-    image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
-    date: '2024-05-20',
-    views: 76,
-    description: 'A look at some of the most inspiring community projects around the world.'
-  }
-];
-
-const Blogs = () => {
-  const navigation = useNavigation();
-  const [blogs] = useState(DUMMY_BLOGS);
-
-  const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('BlogDetail', { blog: item })}>
-      <Image source={{ uri: item.image }} style={styles.image} />
-      <View style={styles.cardContent}>
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.meta}>{item.date} · {item.views} views</Text>
-        <Text style={styles.description} numberOfLines={2}>{item.description}</Text>
->>>>>>> origin/main
       </View>
     </TouchableOpacity>
   );
@@ -138,7 +90,6 @@ const Blogs = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-<<<<<<< HEAD
         <View style={styles.searchContainer}>
           <Feather
             name="search"
@@ -154,7 +105,6 @@ const Blogs = () => {
           />
         </View>
       </View>
-
       <View style={{ paddingVertical: 10, paddingLeft: 10 }}>
         <ScrollView
           horizontal
@@ -188,7 +138,6 @@ const Blogs = () => {
           ))}
         </ScrollView>
       </View>
-
       <FlatList
         data={filteredBlogs}
         renderItem={renderBlogItem}
@@ -196,134 +145,99 @@ const Blogs = () => {
         contentContainerStyle={styles.blogList}
         showsVerticalScrollIndicator={false}
       />
-
-=======
-        <Text style={styles.heading}>Blogs</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('CreateBlogPost')} style={styles.addButton}>
-          <Ionicons name="add" size={32} color="#234B36" />
-        </TouchableOpacity>
-      </View>
-      <Text style={styles.subheading}>Let's learn together!</Text>
-      <FlatList
-        data={blogs}
-        keyExtractor={item => item.id}
-        renderItem={renderItem}
-        contentContainerStyle={styles.list}
-      />
->>>>>>> origin/main
       <BottomBar />
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-<<<<<<< HEAD
   container: {
     flex: 1,
     backgroundColor: "#fff",
   },
   header: {
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
+    backgroundColor: "#fff",
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
-    borderRadius: 12,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 20,
     paddingHorizontal: 12,
-    height: 44,
-    marginHorizontal: 16,
-    marginVertical: 8,
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
+    height: 40,
   },
   searchIcon: {
     marginRight: 8,
-    color: "#666",
   },
   searchInput: {
     flex: 1,
+    height: 40,
     fontSize: 16,
     color: "#333",
-    height: 44,
-    paddingVertical: 8,
-    fontFamily: "System",
   },
   blogList: {
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 80,
   },
   blogCard: {
+    flexDirection: "row",
     backgroundColor: "#fff",
     borderRadius: 16,
     marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
     overflow: "hidden",
+    elevation: 2,
   },
   blogImage: {
-    width: "100%",
-    height: 200,
+    width: 100,
+    height: 100,
+    borderRadius: 12,
+    margin: 12,
   },
   blogContent: {
-    padding: 16,
+    flex: 1,
+    justifyContent: "center",
+    paddingVertical: 12,
   },
   blogCategory: {
     fontSize: 12,
     color: "#1E5128",
     fontWeight: "600",
+    marginBottom: 4,
     textTransform: "uppercase",
-    marginBottom: 8,
   },
   blogTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
     color: "#222",
-    marginBottom: 8,
-    lineHeight: 24,
+    marginBottom: 4,
   },
   blogDescription: {
     fontSize: 14,
     color: "#666",
-    marginBottom: 12,
-    lineHeight: 20,
+    marginBottom: 6,
   },
   blogMeta: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    marginTop: 8,
   },
   blogAuthor: {
-    fontSize: 14,
-    color: "#1E5128",
-    fontWeight: "500",
+    fontSize: 12,
+    color: "#666",
   },
   blogDate: {
     fontSize: 12,
     color: "#666",
+    marginLeft: 8,
   },
   blogViews: {
     fontSize: 12,
     color: "#666",
+    marginLeft: 8,
   },
-=======
-  container: { flex: 1, backgroundColor: '#fff' },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 20 },
-  heading: { fontSize: 32, fontWeight: 'bold' },
-  addButton: { padding: 4 },
-  subheading: { fontSize: 16, color: '#333', marginLeft: 20, marginBottom: 10 },
-  list: { paddingHorizontal: 20, paddingBottom: 20 },
-  card: { flexDirection: 'row', backgroundColor: '#f5f5f5', borderRadius: 12, marginBottom: 16, overflow: 'hidden' },
-  image: { width: 100, height: 100, borderRadius: 12 },
-  cardContent: { flex: 1, padding: 12, justifyContent: 'center' },
-  title: { fontSize: 18, fontWeight: 'bold', marginBottom: 4 },
-  meta: { fontSize: 12, color: '#888', marginBottom: 6 },
-  description: { fontSize: 14, color: '#333' },
->>>>>>> origin/main
 });
 
 export default Blogs;
