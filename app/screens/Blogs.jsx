@@ -9,10 +9,7 @@ import {
   SafeAreaView,
   TextInput,
   ScrollView,
-<<<<<<< HEAD
-  ActivityIndicator,
-=======
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff
+   ActivityIndicator,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import BottomBar from "../components/BottomBar";
@@ -24,7 +21,6 @@ const Blogs = ({ navigation }) => {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [loading, setLoading] = useState(true);
-<<<<<<< HEAD
   const [refreshing, setRefreshing] = useState(false);
 
   const loadBlogs = async () => {
@@ -51,7 +47,6 @@ const Blogs = ({ navigation }) => {
 
     return unsubscribe;
   }, [navigation]);
-=======
 
   useEffect(() => {
     const loadBlogs = async () => {
@@ -67,7 +62,6 @@ const Blogs = ({ navigation }) => {
     };
     loadBlogs();
   }, []);
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff
 
   useEffect(() => {
     const filtered = blogs.filter((blog) => {
@@ -89,29 +83,21 @@ const Blogs = ({ navigation }) => {
     "Clean Energy",
     "Urban Sustainability",
   ];
-
-<<<<<<< HEAD
-  const handleRefresh = () => {
+const handleRefresh = () => {
     setRefreshing(true);
     loadBlogs();
   };
-
-=======
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff
   const renderBlogItem = ({ item }) => (
     <TouchableOpacity
       style={styles.blogCard}
       onPress={() => navigation.navigate("BlogDetail", { blog: item })}
     >
-<<<<<<< HEAD
-      <Image 
+       <Image 
         source={{ uri: item.image }} 
         style={styles.blogImage} 
         defaultSource={require('../assets/Ranya.png')}
       />
-=======
       <Image source={{ uri: item.image }} style={styles.blogImage} />
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff
       <View style={styles.blogContent}>
         <Text style={styles.blogCategory}>{item.category}</Text>
         <Text style={styles.blogTitle} numberOfLines={2}>
@@ -129,45 +115,13 @@ const Blogs = ({ navigation }) => {
             })}
           </Text>
           <Text style={styles.blogViews}>
-<<<<<<< HEAD
-            {item.views?.toLocaleString() || "0"} views
-=======
             {item.views.toLocaleString()} views
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff
           </Text>
         </View>
       </View>
     </TouchableOpacity>
   );
 
-<<<<<<< HEAD
-  const renderEmptyList = () => (
-    <View style={styles.emptyContainer}>
-      {loading ? (
-        <ActivityIndicator size="large" color="#1e5b2c" />
-      ) : (
-        <>
-          <Feather name="file-text" size={50} color="#cccccc" />
-          <Text style={styles.emptyText}>No blogs found</Text>
-          {search || selectedCategory !== "All" ? (
-            <Text style={styles.emptySubText}>
-              Try adjusting your search or filters
-            </Text>
-          ) : (
-            <TouchableOpacity
-              style={styles.createFirstButton}
-              onPress={() => navigation.navigate("CreateBlog")}
-            >
-              <Text style={styles.createFirstButtonText}>Create Your First Blog</Text>
-            </TouchableOpacity>
-          )}
-        </>
-      )}
-    </View>
-  );
-
-=======
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -185,16 +139,12 @@ const Blogs = ({ navigation }) => {
             onChangeText={setSearch}
           />
         </View>
-<<<<<<< HEAD
-        <TouchableOpacity 
+    <TouchableOpacity 
           style={styles.addButton}
           onPress={() => navigation.navigate('CreateBlog')}
         >
           <Feather name="plus" size={22} color="#fff" />
-        </TouchableOpacity>
-=======
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff
-      </View>
+        </TouchableOpacity>      </View>
       <View style={{ paddingVertical: 10, paddingLeft: 10 }}>
         <ScrollView
           horizontal
@@ -234,12 +184,9 @@ const Blogs = ({ navigation }) => {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.blogList}
         showsVerticalScrollIndicator={false}
-<<<<<<< HEAD
-        ListEmptyComponent={renderEmptyList}
+         ListEmptyComponent={renderEmptyList}
         refreshing={refreshing}
         onRefresh={handleRefresh}
-=======
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff
       />
       <BottomBar />
     </SafeAreaView>
@@ -251,32 +198,21 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  header: {
-<<<<<<< HEAD
-    flexDirection: 'row',
+  header: { flexDirection: 'row',
     alignItems: 'center',
-=======
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 8,
     backgroundColor: "#fff",
   },
   searchContainer: {
-<<<<<<< HEAD
-    flex: 1,
-=======
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff
-    flexDirection: "row",
+ flex: 1,
+     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#f0f0f0",
     borderRadius: 20,
     paddingHorizontal: 12,
     height: 40,
-<<<<<<< HEAD
-    marginRight: 12,
-=======
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff
   },
   searchIcon: {
     marginRight: 8,
@@ -287,7 +223,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
   },
-<<<<<<< HEAD
   addButton: {
     width: 40,
     height: 40,
@@ -304,12 +239,10 @@ const styles = StyleSheet.create({
   blogList: {
     paddingHorizontal: 16,
     paddingBottom: 80,
-    flexGrow: 1,
-=======
+    flexGrow: 1,},
   blogList: {
     paddingHorizontal: 16,
     paddingBottom: 80,
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff
   },
   blogCard: {
     flexDirection: "row",
@@ -318,14 +251,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     overflow: "hidden",
     elevation: 2,
-<<<<<<< HEAD
-    shadowColor: "#000",
+shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
-    shadowRadius: 2,
-=======
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff
-  },
+    shadowRadius: 2,  },
   blogImage: {
     width: 100,
     height: 100,
@@ -336,10 +265,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     paddingVertical: 12,
-<<<<<<< HEAD
-    paddingRight: 12,
-=======
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff
   },
   blogCategory: {
     fontSize: 12,
@@ -359,10 +284,6 @@ const styles = StyleSheet.create({
     color: "#666",
     marginBottom: 6,
   },
-<<<<<<< HEAD
-
-=======
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff
   blogMeta: {
     flexDirection: "row",
     alignItems: "center",
@@ -381,11 +302,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#666",
     marginLeft: 8,
-  },
-});
+  
+},})
 
-<<<<<<< HEAD
+
+
 export default Blogs;
-=======
-export default Blogs;
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff

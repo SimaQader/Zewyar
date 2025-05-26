@@ -236,11 +236,7 @@ const Home = () => {
               key={org.id}
               style={styles.orgItem}
               onPress={() =>
-<<<<<<< HEAD
-                navigation.navigate("Organizations", { organization: org })
-=======
                 navigation.navigate("OrganizationDetail", { organization: org })
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff
               }
             >
               <Image source={org.logo} style={styles.orgLogo} />
@@ -252,11 +248,8 @@ const Home = () => {
 
         {/* Recent Blog Posts */}
         <View style={styles.sectionHeader}>
-<<<<<<< HEAD
           <Text style={styles.sectionTitle}>      Recent Blog Posts</Text>
-=======
           <Text style={styles.sectionTitle}>Recent Blog Posts</Text>
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff
           <TouchableOpacity onPress={() => navigation.navigate("Blogs")}>
             <Text style={styles.seeAllButton}>See All</Text>
           </TouchableOpacity>

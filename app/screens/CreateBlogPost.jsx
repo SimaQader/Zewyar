@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState } from "react";
 import {
   View,
@@ -24,6 +23,7 @@ const CreateBlog = ({ navigation }) => {
   const [image, setImage] = useState(null);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+}
 
   const categories = [
     "Climate Action",
@@ -108,11 +108,7 @@ const CreateBlog = ({ navigation }) => {
       console.error("Error publishing blog:", error);
       Alert.alert("Error", "Failed to publish your blog post. Please try again.");
     }
-=======
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-
+  };
 const CreateBlogPost = () => {
   const navigation = useNavigation();
   const [title, setTitle] = useState('');
@@ -123,101 +119,10 @@ const CreateBlogPost = () => {
     // You can add your blog post creation logic here
     alert('Blog post published!');
     navigation.goBack();
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff
   };
 
   return (
     <SafeAreaView style={styles.container}>
-<<<<<<< HEAD
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
-      >
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={styles.header}>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={styles.backButton}
-            >
-              <Feather name="arrow-left" size={24} color="#1e5b2c" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Create New Post</Text>
-            <View style={{ width: 24 }} />
-          </View>
-
-          <View style={styles.formContainer}>
-            <Text style={styles.label}>Title</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter a captivating title"
-              value={title}
-              onChangeText={setTitle}
-              maxLength={100}
-            />
-
-            <Text style={styles.label}>Featured Image</Text>
-            <TouchableOpacity style={styles.imageUpload} onPress={pickImage}>
-              {image ? (
-                <Image source={{ uri: image }} style={styles.previewImage} />
-              ) : (
-                <View style={styles.uploadPlaceholder}>
-                  <Feather name="upload" size={32} color="#c0c0c0" />
-                  <Text style={styles.uploadText}>Upload Image</Text>
-                </View>
-              )}
-            </TouchableOpacity>
-
-            <Text style={styles.label}>Category</Text>
-            <TouchableOpacity
-              style={styles.dropdownButton}
-              onPress={() => setShowCategoryDropdown(!showCategoryDropdown)}
-            >
-              <Text style={category ? styles.dropdownText : styles.dropdownPlaceholder}>
-                {category || "Select category"}
-              </Text>
-              <Feather name="chevron-down" size={20} color="#666" />
-            </TouchableOpacity>
-
-            {showCategoryDropdown && (
-              <View style={styles.dropdownList}>
-                {categories.map((item) => (
-                  <TouchableOpacity
-                    key={item}
-                    style={styles.dropdownItem}
-                    onPress={() => {
-                      setCategory(item);
-                      setShowCategoryDropdown(false);
-                    }}
-                  >
-                    <Text style={styles.dropdownItemText}>{item}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
-
-            <Text style={styles.label}>Content</Text>
-            <TextInput
-              style={styles.contentInput}
-              placeholder="Write your blog content here..."
-              value={content}
-              onChangeText={setContent}
-              multiline
-              textAlignVertical="top"
-            />
-
-            <TouchableOpacity
-              style={styles.publishButton}
-              onPress={handlePublish}
-              disabled={isUploading}
-            >
-              <Text style={styles.publishButtonText}>
-                {isUploading ? "Publishing..." : "Publish Now"}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-=======
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.heading}>Create New Post</Text>
         <Text style={styles.label}>Title</Text>
@@ -249,138 +154,11 @@ const CreateBlogPost = () => {
           <Text style={styles.backButtonText}>Cancel</Text>
         </TouchableOpacity>
       </ScrollView>
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-<<<<<<< HEAD
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
-  },
-  backButton: {
-    padding: 4,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#1e5b2c",
-  },
-  formContainer: {
-    padding: 16,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#333",
-    marginBottom: 8,
-    marginTop: 16,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-  },
-  imageUpload: {
-    height: 200,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    backgroundColor: "#f9f9f9",
-    overflow: "hidden",
-  },
-  previewImage: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "cover",
-  },
-  uploadPlaceholder: {
-    width: "100%",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  uploadText: {
-    marginTop: 8,
-    color: "#888",
-    fontSize: 14,
-  },
-  dropdownButton: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 12,
-  },
-  dropdownText: {
-    fontSize: 16,
-    color: "#333",
-  },
-  dropdownPlaceholder: {
-    fontSize: 16,
-    color: "#999",
-  },
-  dropdownList: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    marginTop: 4,
-    backgroundColor: "#fff",
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-  },
-  dropdownItem: {
-    padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
-  },
-  dropdownItemText: {
-    fontSize: 16,
-    color: "#333",
-  },
-  contentInput: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    minHeight: 200,
-  },
-  publishButton: {
-    backgroundColor: "#1e5b2c",
-    borderRadius: 8,
-    padding: 16,
-    alignItems: "center",
-    marginTop: 24,
-    marginBottom: 32,
-  },
-  publishButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});
-
-export default CreateBlog;
-=======
   container: { flex: 1, backgroundColor: '#fff' },
   content: { padding: 20 },
   heading: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
@@ -393,4 +171,3 @@ export default CreateBlog;
 });
 
 export default CreateBlogPost;
->>>>>>> 296fdf8007ce082e0099a3185dacabd8e9baa5ff
