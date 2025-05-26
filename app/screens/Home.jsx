@@ -19,8 +19,9 @@ import {
   FontAwesome5,
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import dataService from "../services/dataService";
 import BottomBar from "../components/BottomBar";
+import { collection, getDocs } from 'firebase/firestore'; // Import Firestore functions
+import { db } from '../firebase'; // Import db from your firebase config
 
 const bannerImage =
   "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"; // Placeholder
@@ -36,26 +37,62 @@ const Home = () => {
   const [filteredOrgs, setFilteredOrgs] = useState([]);
   const [filteredBlogs, setFilteredBlogs] = useState([]);
 
+  const fetchBlogPosts = async () => {
+    try {
+      const blogsCollection = collection(db, 'blogs');
+      const blogSnapshot = await getDocs(blogsCollection);
+      const blogsData = blogSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setBlogs(blogsData);
+      setFilteredBlogs(blogsData);
+    } catch (error) {
+      console.error("Error fetching blog posts:", error);
+    }
+  };
+
+  const fetchCauses = async () => {
+    try {
+      const causesCollection = collection(db, 'causes');
+      const causeSnapshot = await getDocs(causesCollection);
+      const causesData = causeSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setCauses(causesData);
+      setFilteredCauses(causesData);
+    } catch (error) {
+      console.error("Error fetching causes:", error);
+    }
+  };
+
+  const fetchOrganizations = async () => {
+    try {
+      const orgsCollection = collection(db, 'organizations');
+      const orgSnapshot = await getDocs(orgsCollection);
+      const orgsData = orgSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setOrganizations(orgsData);
+      setFilteredOrgs(orgsData);
+    } catch (error) {
+      console.error("Error fetching organizations:", error);
+    }
+  };
+
   useEffect(() => {
     const loadInitialData = async () => {
-      try {
-        const [causesData, orgsData, blogsData] = await Promise.all([
-          dataService.fetchCauses(),
-          dataService.fetchOrganizations(),
-          dataService.fetchBlogs(),
-        ]);
-        setCauses(causesData);
-        setOrganizations(orgsData);
-        setBlogs(blogsData);
-        setFilteredCauses(causesData);
-        setFilteredOrgs(orgsData);
-        setFilteredBlogs(blogsData);
+      try { // Use Promise.all to fetch data concurrently
+        await Promise.all([fetchCauses(), fetchOrganizations(), fetchBlogPosts()]);
       } catch (error) {
         console.error("Error loading data:", error);
       } finally {
         setLoading(false);
       }
     };
+
     loadInitialData();
   }, []);
 

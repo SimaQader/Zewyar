@@ -32,8 +32,19 @@ const ForgotPassword = () => {
         navigate('LogIn', { message: 'Password reset email sent!' });
       }, 2000);
     } catch (error) {
-      setError('Failed to send reset email. Please try again.');
+      setSuccessMessage(''); // Clear success message on error
       console.error(error);
+      switch (error.code) {
+        case 'auth/user-not-found':
+          setError('User not found with this email address.');
+          break;
+        case 'auth/invalid-email':
+          setError('Invalid email address format.');
+          break;
+        default:
+          setError('Failed to send reset email. Please try again.');
+          break;
+      }
     }
   };
   const handlegoback = () => {

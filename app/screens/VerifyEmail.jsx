@@ -10,11 +10,17 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView
-} from 'react-native';
-import { navigate, reset } from '../navigation/navigation';
+} from "react-native";
+import { navigate, reset } from "../navigation/navigation";
+import {
+  getAuth,
+  sendEmailVerification,
+  reload,
+} from "firebase/auth";
+import { auth } from "../firebase"; // Assuming your firebase auth instance is exported as 'auth' from firebase.js
 
 const VerifyEmailScreen = ({ route }) => {
-  // Set a default email and safely access route params if they exist
+  const authentication = getAuth(auth.app); // Use the auth instance from firebase.js
   const email = route?.params?.email || 'example@gmail.com';
   
   const [code, setCode] = useState(['', '', '', '']);
@@ -22,18 +28,27 @@ const VerifyEmailScreen = ({ route }) => {
   const [timer, setTimer] = useState(60);
   const [resendActive, setResendActive] = useState(false);
   
-  const inputRefs = [
-    useRef(null),
-    useRef(null),
-    useRef(null),
-    useRef(null)
-  ];
+  // Check email verification status periodically
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const user = authentication.currentUser;
+      if (user) {
+        await reload(user);
+        if (user.emailVerified) {
+          clearInterval(interval);
+          reset({ index: 0, routes: [{ name: 'Home' }] });
+        }
+      }
+    }, 5000); // Check every 5 seconds
+    
+    return () => clearInterval(interval); // Cleanup interval
+  }, [authentication]);
 
   // Timer for resend code functionality
   useEffect(() => {
     if (timer > 0) {
       const interval = setInterval(() => {
-        setTimer(timer - 1);
+        setTimer(prevTimer => prevTimer - 1);
       }, 1000);
       return () => clearInterval(interval);
     } else {
@@ -41,55 +56,29 @@ const VerifyEmailScreen = ({ route }) => {
     }
   }, [timer]);
 
-  const handleCodeChange = (text, index) => {
-    // Only allow digits
-    if (/^\d*$/.test(text)) {
-      const newCode = [...code];
-      newCode[index] = text;
-      setCode(newCode);
-      
-      // Auto-advance to next input
-      if (text.length === 1 && index < 3 && inputRefs[index + 1]?.current) {
-        inputRefs[index + 1].current.focus();
-      }
-    }
-  };
-
-  const handleKeyPress = (e, index) => {
-    // Move to previous input on backspace if current input is empty
-    if (e.nativeEvent.key === 'Backspace' && !code[index] && index > 0 && inputRefs[index - 1]?.current) {
-      inputRefs[index - 1].current.focus();
-    }
-  };
-
-  const handleResendCode = () => {
+  const handleResendCode = async () => {
     if (resendActive) {
-      // Reset timer and code
-      setTimer(60);
-      setResendActive(false);
-      setCode(['', '', '', '']);
-      setError('');
-      
-      // Here you would call your API to resend the code
-      console.log('Resending code to', email);
-    }
-  };
-
-  const handleVerify = () => {
-    const fullCode = code.join('');
-    if (fullCode.length !== 4) {
-      setError('Please enter all 4 digits of the code');
-      return;
-    }
-    
-    // Here you would verify the code with your backend
-    if (fullCode === '1234') { // Replace with actual verification
-      reset({
-        index: 0,
-        routes: [{ name: 'Home' }],
-      });
-    } else {
-      setError('Invalid verification code. Please try again.');
+      try {
+        setTimer(60);
+        setResendActive(false);
+        setError('');
+        const user = authentication.currentUser;
+        if (user) {
+          await sendEmailVerification(user);
+          console.log('Verification email sent again!');
+        } else {
+          setError('No active user found. Please try signing up or logging in again.');
+        }
+      } catch (error) {
+        console.error('Error resending verification email:', error);
+        let errorMessage = 'Failed to resend verification email. Please try again.';
+        if (error.code === 'auth/too-many-requests') {
+          errorMessage = 'Too many requests. Please wait a moment before trying to resend.';
+        } else if (error.code === 'auth/user-not-found') {
+          errorMessage = 'User not found. Please sign up.';
+        }
+        setError(errorMessage);
+      }
     }
   };
 
@@ -116,25 +105,8 @@ const VerifyEmailScreen = ({ route }) => {
         <Text style={styles.title}>Verify Your Email</Text>
         
         <Text style={styles.subtitle}>
-          Please enter 4 digit code sent to {'\n'}{email}
+          We've sent a verification email to {email}. Please check your inbox and click the verification link.
         </Text>
-        
-        <View style={styles.codeContainer}>
-          {[0, 1, 2, 3].map((index) => (
-            <TextInput
-              key={index}
-              ref={inputRefs[index]}
-              style={styles.codeInput}
-              value={code[index]}
-              onChangeText={(text) => handleCodeChange(text, index)}
-              onKeyPress={(e) => handleKeyPress(e, index)}
-              keyboardType="number-pad"
-              maxLength={1}
-              textAlign="center"
-              selectTextOnFocus
-            />
-          ))}
-        </View>
         
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
         
@@ -147,15 +119,8 @@ const VerifyEmailScreen = ({ route }) => {
             styles.resendText, 
             !resendActive && styles.resendTextDisabled
           ]}>
-            {resendActive ? 'Resend Code' : `Resend Code (${timer}s)`}
+            {resendActive ? 'Resend Email' : `Resend Email (${timer}s)`}
           </Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={styles.doneButton}
-          onPress={handleVerify}
-        >
-          <Text style={styles.doneButtonText}>Done</Text>
         </TouchableOpacity>
         
         <TouchableOpacity 
@@ -204,6 +169,7 @@ const styles = StyleSheet.create({
     color: '#333',
     textAlign: 'center',
     marginBottom: 30,
+    paddingHorizontal: 20,
   },
   codeContainer: {
     flexDirection: 'row',
@@ -223,6 +189,8 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     marginBottom: 10,
+    textAlign: 'center',
+    paddingHorizontal: 20,
   },
   resendContainer: {
     marginBottom: 20,

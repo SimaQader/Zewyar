@@ -18,6 +18,7 @@ import { auth } from "../firebase";
 import {
   getAuth,
   createUserWithEmailAndPassword,
+  sendEmailVerification,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   signOut,
@@ -25,6 +26,7 @@ import {
 } from "firebase/auth";
 import { navigate } from "../navigation/navigation";
 import { useNavigation } from "@react-navigation/native";
+import { collection, doc, setDoc } from "firebase/firestore";
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
@@ -35,22 +37,61 @@ const SignUpScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const auth = getAuth();
+  const { db } = require('../firebase'); // Assuming 'db' is exported from your firebase.js
 
   const handleSignUp = async () => {
+    setLoading(true);
     try {
-      if (password !== confirmPassword) {
-        Alert.alert("Error", "Passwords do not match");
+      if (!firstName || !lastName || !email || !password || !confirmPassword) {
+        setError('Please fill in all fields');
+        setLoading(false);
         return;
       }
+      if (password !== confirmPassword) {
+        setError('Passwords do not match');
+        setLoading(false);
+        return;
+      }
+      setError(''); // Clear previous errors
 
       const userCredential = await createUserWithEmailAndPassword(
-        auth,
         email,
         password
       );
       const user = userCredential.user;
       navigate("VerifyEmail", { email });
+
+      // Send email verification
+      try {
+        if (auth.currentUser) {
+          await sendEmailVerification(auth.currentUser);
+          Alert.alert("Verification Email Sent", "Please check your email to verify your account.");
+        } else {
+          // This case should ideally not happen after successful user creation
+          console.error("No user is currently logged in after sign up.");
+          Alert.alert("Sign Up Error", "User not found after creation. Please try logging in.");
+        }
+      } catch (verificationError) {
+        console.error("Error sending verification email:", verificationError);
+        // Handle specific verification email errors if needed
+        Alert.alert("Verification Email Error", "Failed to send verification email. Please try again later.");
+      }
+
+      // Add user data to Firestore
+      try {
+        await setDoc(doc(db, "users", user.uid), {
+          firstName,
+          lastName,
+          email: user.email,
+        });
+      } catch (firestoreError) {
+        console.error("Error adding user data to Firestore:", firestoreError);
+        Alert.alert("Database Error", "Failed to save user data. Please contact support.");
+        // Consider rolling back user creation or handling this case appropriately
+      }
     } catch (error) {
       Alert.alert("Error", error.message);
     }
@@ -167,7 +208,11 @@ const SignUpScreen = () => {
               />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
+          <TouchableOpacity
+            style={styles.signUpButton}
+            onPress={handleSignUp}
+            disabled={loading}
+          >
             <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
           <View style={styles.loginTextContainer}>

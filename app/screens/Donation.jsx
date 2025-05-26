@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { collection, getDocs } from "firebase/firestore";
 import BottomBar from "../components/BottomBar";
 import dataService from "../services/dataService";
 
@@ -24,8 +25,16 @@ const Donation = () => {
 
   useEffect(() => {
     const loadDonations = async () => {
-      try {
-        const causesData = await dataService.fetchCauses();
+       try {
+        const causesCollection = collection(db, "causes");
+        const causeSnapshot = await getDocs(causesCollection);
+        const causesData = causeSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        // Assuming dataService.fetchCauses() returned data in a similar format
+        // const causesData = await dataService.fetchCauses();
         setDonations(causesData);
       } catch (error) {
         console.error("Error loading donations:", error);

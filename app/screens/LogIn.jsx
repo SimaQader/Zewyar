@@ -14,7 +14,7 @@ import {
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { navigate } from '../navigation/navigation';
 import { useNavigation } from '@react-navigation/native';
-
+import { auth } from '../firebase';
 const LoginScreen = ({ route }) => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');

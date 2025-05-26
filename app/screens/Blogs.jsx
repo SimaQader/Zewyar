@@ -13,8 +13,8 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import BottomBar from "../components/BottomBar";
-import dataService from "../services/dataService";
-
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebase';
 const Blogs = ({ navigation }) => {
   const [blogs, setBlogs] = useState([]);
   const [filteredBlogs, setFilteredBlogs] = useState([]);
@@ -26,8 +26,12 @@ const Blogs = ({ navigation }) => {
   const loadBlogs = async () => {
     try {
       setLoading(true);
-      const blogsData = await dataService.fetchBlogs();
-      setBlogs(blogsData);
+      const querySnapshot = await getDocs(collection(db, 'blogs'));
+      const blogsData = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+ setBlogs(blogsData);
       setFilteredBlogs(blogsData);
     } catch (error) {
       console.error("Error loading blogs:", error);
@@ -48,20 +52,6 @@ const Blogs = ({ navigation }) => {
     return unsubscribe;
   }, [navigation]);
 
-  useEffect(() => {
-    const loadBlogs = async () => {
-      try {
-        const blogsData = await dataService.fetchBlogs();
-        setBlogs(blogsData);
-        setFilteredBlogs(blogsData);
-      } catch (error) {
-        console.error("Error loading blogs:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadBlogs();
-  }, []);
 
   useEffect(() => {
     const filtered = blogs.filter((blog) => {
@@ -92,10 +82,9 @@ const handleRefresh = () => {
       style={styles.blogCard}
       onPress={() => navigation.navigate("BlogDetail", { blog: item })}
     >
-       <Image 
-        source={{ uri: item.image }} 
-        style={styles.blogImage} 
-        defaultSource={require('../assets/Ranya.png')}
+       {/* Consider adding a placeholder or error handling for image loading */}
+       <Image
+ source={{ uri: item.image }}
       />
       <Image source={{ uri: item.image }} style={styles.blogImage} />
       <View style={styles.blogContent}>
